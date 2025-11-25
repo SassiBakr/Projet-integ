@@ -60,7 +60,7 @@ class AdminHomeScreen extends StatelessWidget {
   }
 
   Widget _buildStatsCards() {
-    return Row(
+    return const Row(
       children: [
         Expanded(
           child: _StatCard(
@@ -71,7 +71,7 @@ class AdminHomeScreen extends StatelessWidget {
             trend: '+12%',
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
           child: _StatCard(
             icon: Icons.engineering,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart'; // Désactivé temporairement
 
 class AppTheme {
   // Couleurs principales
@@ -31,62 +31,62 @@ class AppTheme {
       surface: Colors.white,
     ),
     
-    // Typography
-    textTheme: GoogleFonts.poppinsTextTheme().copyWith(
-      displayLarge: GoogleFonts.poppins(
+    // Typography - Using system fonts temporarily
+    textTheme: ThemeData.light().textTheme.copyWith(
+      displayLarge: const TextStyle(
         fontSize: 32,
         fontWeight: FontWeight.bold,
-        color: const Color(0xFF1E293B),
+        color: Color(0xFF1E293B),
       ),
-      displayMedium: GoogleFonts.poppins(
+      displayMedium: const TextStyle(
         fontSize: 28,
         fontWeight: FontWeight.bold,
-        color: const Color(0xFF1E293B),
+        color: Color(0xFF1E293B),
       ),
-      displaySmall: GoogleFonts.poppins(
+      displaySmall: const TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        color: const Color(0xFF1E293B),
+        color: Color(0xFF1E293B),
       ),
-      headlineMedium: GoogleFonts.poppins(
+      headlineMedium: const TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w600,
-        color: const Color(0xFF1E293B),
+        color: Color(0xFF1E293B),
       ),
-      titleLarge: GoogleFonts.poppins(
+      titleLarge: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w600,
-        color: const Color(0xFF1E293B),
+        color: Color(0xFF1E293B),
       ),
-      titleMedium: GoogleFonts.poppins(
+      titleMedium: const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
-        color: const Color(0xFF1E293B),
+        color: Color(0xFF1E293B),
       ),
-      bodyLarge: GoogleFonts.poppins(
+      bodyLarge: const TextStyle(
         fontSize: 16,
-        color: const Color(0xFF475569),
+        color: Color(0xFF475569),
       ),
-      bodyMedium: GoogleFonts.poppins(
+      bodyMedium: const TextStyle(
         fontSize: 14,
-        color: const Color(0xFF475569),
+        color: Color(0xFF475569),
       ),
-      bodySmall: GoogleFonts.poppins(
+      bodySmall: const TextStyle(
         fontSize: 12,
-        color: const Color(0xFF64748B),
+        color: Color(0xFF64748B),
       ),
     ),
     
     // AppBar Theme
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       elevation: 0,
       centerTitle: true,
       backgroundColor: Colors.white,
-      foregroundColor: const Color(0xFF1E293B),
-      titleTextStyle: GoogleFonts.poppins(
+      foregroundColor: Color(0xFF1E293B),
+      titleTextStyle: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w600,
-        color: const Color(0xFF1E293B),
+        color: Color(0xFF1E293B),
       ),
     ),
     
@@ -109,7 +109,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
         ),
         elevation: 0,
-        textStyle: GoogleFonts.poppins(
+        textStyle: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
         ),
@@ -120,7 +120,7 @@ class AppTheme {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: primaryColor,
-        textStyle: GoogleFonts.poppins(
+        textStyle: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
         ),
@@ -174,58 +174,58 @@ class AppTheme {
     ),
     
     // Typography
-    textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme).copyWith(
-      displayLarge: GoogleFonts.poppins(
+    textTheme: const TextTheme(
+      displayLarge: TextStyle(
         fontSize: 32,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-      displayMedium: GoogleFonts.poppins(
+      displayMedium: TextStyle(
         fontSize: 28,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-      displaySmall: GoogleFonts.poppins(
+      displaySmall: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-      headlineMedium: GoogleFonts.poppins(
+      headlineMedium: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: Colors.white,
       ),
-      titleLarge: GoogleFonts.poppins(
+      titleLarge: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: Colors.white,
       ),
-      titleMedium: GoogleFonts.poppins(
+      titleMedium: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: Colors.white,
       ),
-      bodyLarge: GoogleFonts.poppins(
+      bodyLarge: TextStyle(
         fontSize: 16,
-        color: const Color(0xFFCBD5E1),
+        color: Color(0xFFCBD5E1),
       ),
-      bodyMedium: GoogleFonts.poppins(
+      bodyMedium: TextStyle(
         fontSize: 14,
-        color: const Color(0xFFCBD5E1),
+        color: Color(0xFFCBD5E1),
       ),
-      bodySmall: GoogleFonts.poppins(
+      bodySmall: TextStyle(
         fontSize: 12,
-        color: const Color(0xFF94A3B8),
+        color: Color(0xFF94A3B8),
       ),
     ),
     
     // AppBar Theme
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       elevation: 0,
       centerTitle: true,
-      backgroundColor: const Color(0xFF1E293B),
+      backgroundColor: Color(0xFF1E293B),
       foregroundColor: Colors.white,
-      titleTextStyle: GoogleFonts.poppins(
+      titleTextStyle: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: Colors.white,

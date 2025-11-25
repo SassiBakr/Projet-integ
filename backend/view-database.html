@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualiseur Base de Données SAV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: #4F46E5;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .login-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .login-form {
+            display: flex;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        .login-form input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .login-form button {
+            padding: 12px 30px;
+            background: #4F46E5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .login-form button:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+        .status {
+            text-align: center;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            padding: 0 30px;
+            gap: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            color: #4F46E5;
+        }
+        .tab.active {
+            color: #4F46E5;
+            border-bottom-color: #4F46E5;
+        }
+        .content {
+            padding: 30px;
+        }
+        .data-view {
+            display: none;
+        }
+        .data-view.active {
+            display: block;
+        }
+        .data-grid {
+            display: grid;
+            gap: 20px;
+        }
+        .data-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        .data-card:hover {
+            border-color: #4F46E5;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        }
+        .data-card h3 {
+            color: #4F46E5;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .data-field {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+        }
+        .data-field strong {
+            color: #495057;
+            min-width: 150px;
+        }
+        .data-field span {
+            color: #212529;
+            word-break: break-all;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge.admin {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .badge.technician {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .badge.client {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #4F46E5;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 24px;
+            transition: all 0.3s;
+        }
+        .refresh-btn:hover {
+            background: #4338ca;
+            transform: rotate(180deg) scale(1.1);
+        }
+        .test-accounts {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
+        }
+        .test-accounts h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .test-accounts code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #d63384;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗄️ Visualiseur Base de Données SAV</h1>
+            <p>Mode: Base de données en mémoire</p>
+        </div>
+
+        <div class="login-section">
+            <div class="login-form">
+                <input type="email" id="email" placeholder="Email" value="admin@sav.com">
+                <input type="password" id="password" placeholder="Mot de passe" value="admin123">
+                <button onclick="login()">🔐 Se connecter</button>
+            </div>
+            <div id="status"></div>
+            <div class="test-accounts">
+                <h4>📋 Comptes de test disponibles:</h4>
+                <p>• Admin: <code>admin@sav.com</code> / <code>admin123</code></p>
+                <p>• Technicien: <code>tech@sav.com</code> / <code>admin123</code></p>
+                <p>• Client: <code>client@sav.com</code> / <code>admin123</code></p>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('users')">👥 Utilisateurs</button>
+            <button class="tab" onclick="switchTab('appointments')">📅 Rendez-vous</button>
+            <button class="tab" onclick="switchTab('repairs')">🔧 Réparations</button>
+            <button class="tab" onclick="switchTab('offers')">💼 Offres</button>
+            <button class="tab" onclick="switchTab('notifications')">🔔 Notifications</button>
+        </div>
+
+        <div class="content">
+            <div id="users" class="data-view active"></div>
+            <div id="appointments" class="data-view"></div>
+            <div id="repairs" class="data-view"></div>
+            <div id="offers" class="data-view"></div>
+            <div id="notifications" class="data-view"></div>
+        </div>
+    </div>
+
+    <button class="refresh-btn" onclick="loadAllData()" title="Rafraîchir">🔄</button>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let token = null;
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const statusDiv = document.getElementById('status');
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    token = data.token;
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `✅ Connecté en tant que ${data.user.email} (${data.user.role})`;
+                    await loadAllData();
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = `❌ ${data.message || 'Erreur de connexion'}`;
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Erreur: ${error.message}`;
+            }
+        }
+
+        async function apiRequest(endpoint) {
+            if (!token) {
+                return { error: 'Non connecté - Veuillez vous connecter d\'abord' };
+            }
+
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    return { error: `Erreur ${response.status}` };
+                }
+
+                return await response.json();
+            } catch (error) {
+                return { error: error.message };
+            }
+        }
+
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update views
+            document.querySelectorAll('.data-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        async function loadAllData() {
+            if (!token) return;
+
+            await Promise.all([
+                loadUsers(),
+                loadAppointments(),
+                loadRepairs(),
+                loadOffers(),
+                loadNotifications()
+            ]);
+        }
+
+        async function loadUsers() {
+            const data = await apiRequest('/users');
+            const container = document.getElementById('users');
+
+            if (data.error) {
+                container.innerHTML = `<div class="empty-state">${data.error}</div>`;
+                return;
+            }
+
+            if (!data.users || data.users.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun utilisateur trouvé</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <h2>👥 Utilisateurs (${data.users.length})</h2>
+                <div class="data-grid">
+                    ${data.users.map(user => `
+                        <div class="data-card">
+                            <h3>${user.firstName} ${user.lastName} <span class="badge ${user.role}">${user.role}</span></h3>
+                            <div class="data-field"><strong>ID:</strong> <span>${user._id}</span></div>
+                            <div class="data-field"><strong>Email:</strong> <span>${user.email}</span></div>
+                            <div class="data-field"><strong>Téléphone:</strong> <span>${user.phone || 'N/A'}</span></div>
+                            ${user.specialties ? `<div class="data-field"><strong>Spécialités:</strong> <span>${user.specialties.join(', ')}</span></div>` : ''}
+                            ${user.rating ? `<div class="data-field"><strong>Note:</strong> <span>⭐ ${user.rating}/5 (${user.totalReviews} avis)</span></div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function loadAppointments() {
+            const data = await apiRequest('/appointments');
+            const container = document.getElementById('appointments');
+
+            if (data.error) {
+                container.innerHTML = `<div class="empty-state">${data.error}</div>`;
+                return;
+            }
+
+            if (!data.appointments || data.appointments.length === 0) {
+                container.innerHTML = '<div class="empty-state">📅 Aucun rendez-vous pour le moment</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <h2>📅 Rendez-vous (${data.appointments.length})</h2>
+                <div class="data-grid">
+                    ${data.appointments.map(apt => `
+                        <div class="data-card">
+                            <h3>Rendez-vous #${apt._id}</h3>
+                            <div class="data-field"><strong>Client:</strong> <span>${apt.clientId}</span></div>
+                            <div class="data-field"><strong>Technicien:</strong> <span>${apt.technicianId || 'Non assigné'}</span></div>
+                            <div class="data-field"><strong>Date:</strong> <span>${new Date(apt.scheduledDate).toLocaleString('fr-FR')}</span></div>
+                            <div class="data-field"><strong>Statut:</strong> <span>${apt.status}</span></div>
+                            <div class="data-field"><strong>Type:</strong> <span>${apt.serviceType}</span></div>
+                            <div class="data-field"><strong>Description:</strong> <span>${apt.description}</span></div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function loadRepairs() {
+            const data = await apiRequest('/repairs');
+            const container = document.getElementById('repairs');
+
+            if (data.error) {
+                container.innerHTML = `<div class="empty-state">${data.error}</div>`;
+                return;
+            }
+
+            if (!data.repairs || data.repairs.length === 0) {
+                container.innerHTML = '<div class="empty-state">🔧 Aucune réparation enregistrée</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <h2>🔧 Réparations (${data.repairs.length})</h2>
+                <div class="data-grid">
+                    ${data.repairs.map(repair => `
+                        <div class="data-card">
+                            <h3>Réparation #${repair._id}</h3>
+                            <div class="data-field"><strong>Appareil:</strong> <span>${repair.deviceType} - ${repair.deviceBrand} ${repair.deviceModel}</span></div>
+                            <div class="data-field"><strong>Problème:</strong> <span>${repair.issueDescription}</span></div>
+                            <div class="data-field"><strong>Statut:</strong> <span>${repair.status}</span></div>
+                            <div class="data-field"><strong>Coût:</strong> <span>${repair.estimatedCost || 0}€</span></div>
+                            ${repair.diagnosis ? `<div class="data-field"><strong>Diagnostic:</strong> <span>${repair.diagnosis}</span></div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function loadOffers() {
+            const data = await apiRequest('/offers');
+            const container = document.getElementById('offers');
+
+            if (data.error) {
+                container.innerHTML = `<div class="empty-state">${data.error}</div>`;
+                return;
+            }
+
+            if (!data.offers || data.offers.length === 0) {
+                container.innerHTML = '<div class="empty-state">💼 Aucune offre disponible</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <h2>💼 Offres (${data.offers.length})</h2>
+                <div class="data-grid">
+                    ${data.offers.map(offer => `
+                        <div class="data-card">
+                            <h3>${offer.title}</h3>
+                            <div class="data-field"><strong>Prix:</strong> <span>${offer.price}€</span></div>
+                            <div class="data-field"><strong>Catégorie:</strong> <span>${offer.category}</span></div>
+                            <div class="data-field"><strong>Description:</strong> <span>${offer.description}</span></div>
+                            <div class="data-field"><strong>Durée estimée:</strong> <span>${offer.estimatedDuration} min</span></div>
+                            <div class="data-field"><strong>Disponible:</strong> <span>${offer.isAvailable ? '✅ Oui' : '❌ Non'}</span></div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function loadNotifications() {
+            const data = await apiRequest('/notifications/my');
+            const container = document.getElementById('notifications');
+
+            if (data.error) {
+                container.innerHTML = `<div class="empty-state">${data.error}</div>`;
+                return;
+            }
+
+            if (!data.notifications || data.notifications.length === 0) {
+                container.innerHTML = '<div class="empty-state">🔔 Aucune notification</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <h2>🔔 Notifications (${data.notifications.length})</h2>
+                <div class="data-grid">
+                    ${data.notifications.map(notif => `
+                        <div class="data-card">
+                            <h3>${notif.title} ${notif.isRead ? '' : '🔴'}</h3>
+                            <div class="data-field"><strong>Message:</strong> <span>${notif.message}</span></div>
+                            <div class="data-field"><strong>Type:</strong> <span>${notif.type}</span></div>
+                            <div class="data-field"><strong>Date:</strong> <span>${new Date(notif.createdAt).toLocaleString('fr-FR')}</span></div>
+                            <div class="data-field"><strong>Lu:</strong> <span>${notif.isRead ? '✅ Oui' : '❌ Non'}</span></div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Auto-login on page load if token exists
+        window.onload = () => {
+            console.log('📊 Visualiseur de base de données SAV chargé');
+            console.log('💡 Connectez-vous pour voir les données');
+        };
+    </script>
+</body>
+</html>

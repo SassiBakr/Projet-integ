@@ -3,9 +3,8 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/routes/app_routes.dart';
-import '../../../core/services/auth_service.dart';
 import '../../../core/models/user_model.dart';
-import '../providers/auth_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,58 +30,54 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    authProvider.setLoading(true);
-    authProvider.clearError();
 
     try {
-      // ===== MODE TEST : Accepter n'importe quel email/mot de passe =====
-      // Déterminer le rôle basé sur l'email pour la démo
-      UserRole role;
-      final email = _emailController.text.trim().toLowerCase();
-      
-      if (email.contains('admin')) {
-        role = UserRole.admin;
-      } else if (email.contains('tech')) {
-        role = UserRole.technician;
-      } else {
-        role = UserRole.client;
-      }
-
-      // Simuler un délai réseau
-      await Future.delayed(const Duration(seconds: 1));
-      
-      await AuthService.saveUserRole(role);
-      authProvider.setLoading(false);
-
-      // Afficher un message de succès
-      Get.snackbar(
-        'Connexion réussie',
-        'Bienvenue ${email.split('@')[0]} !',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
+      // Connexion avec l'API backend
+      final success = await authProvider.login(
+        _emailController.text.trim(),
+        _passwordController.text,
       );
 
-      // Navigate based on role
-      switch (role) {
-        case UserRole.client:
-          Get.offAllNamed(AppRoutes.clientHome);
-          break;
-        case UserRole.technician:
-          Get.offAllNamed(AppRoutes.technicianHome);
-          break;
-        case UserRole.admin:
-          Get.offAllNamed(AppRoutes.adminHome);
-          break;
+      if (success && authProvider.currentUser != null) {
+        final user = authProvider.currentUser!;
+        
+        // Afficher un message de succès
+        Get.snackbar(
+          'Connexion réussie',
+          'Bienvenue ${user.firstName} !',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+
+        // Navigate based on role
+        switch (user.role) {
+          case UserRole.client:
+            Get.offAllNamed(AppRoutes.clientHome);
+            break;
+          case UserRole.technician:
+            Get.offAllNamed(AppRoutes.technicianHome);
+            break;
+          case UserRole.admin:
+            Get.offAllNamed(AppRoutes.adminHome);
+            break;
+        }
+      } else {
+        // Afficher l'erreur
+        Get.snackbar(
+          'Erreur de connexion',
+          authProvider.error ?? 'Email ou mot de passe incorrect',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
       }
     } catch (e) {
-      authProvider.setLoading(false);
-      authProvider.setError(e.toString());
-      
       Get.snackbar(
         'Erreur',
-        'Une erreur est survenue',
+        'Impossible de se connecter au serveur',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,

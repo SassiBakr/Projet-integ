@@ -136,42 +136,64 @@ lib/
 │           └── admin_provider.dart
 ```
 
-## 🚀 Installation
+## 🚀 Installation Rapide
+
+⏱️ **Configuration en 10 minutes** - Consultez le [Guide de Démarrage Rapide](QUICK_START_GUIDE.md)
 
 ### Prérequis
 
-- Flutter SDK (>=3.0.0)
-- Dart SDK
-- Android Studio / VS Code avec extensions Flutter
-- Compte Firebase pour l'authentification et la base de données
+- **XAMPP** (pour MySQL) - [Télécharger](https://www.apachefriends.org/)
+- **Node.js** (v16+) - [Télécharger](https://nodejs.org/)
+- **Flutter SDK** (v3.0+) - [Télécharger](https://flutter.dev/)
+- **Git** - [Télécharger](https://git-scm.com/)
 
 ### Étapes d'installation
 
-1. **Cloner le projet**
+#### 1️⃣ Cloner le projet
 ```bash
-git clone <repository-url>
-cd GL
+git clone https://github.com/SassiBakr/Projet-integ.git
+cd Projet-integ
 ```
 
-2. **Installer les dépendances**
+#### 2️⃣ Configurer MySQL (XAMPP)
 ```bash
+# 1. Démarrer XAMPP (Apache + MySQL)
+# 2. Aller sur http://localhost/phpmyadmin
+# 3. Créer la base de données 'sav_db'
+# 4. Importer le fichier backend/database.sql
+```
+
+#### 3️⃣ Installer et démarrer le backend
+```bash
+cd backend
+copy .env.example .env
+npm install
+node server-mysql.js
+```
+
+✅ Le serveur démarre sur http://localhost:3000
+
+#### 4️⃣ Installer et lancer Flutter
+```bash
+cd ..
 flutter pub get
+flutter run -d chrome
 ```
 
-3. **Configuration Firebase**
-   - Créer un projet Firebase sur https://console.firebase.google.com
-   - Télécharger `google-services.json` (Android) et `GoogleService-Info.plist` (iOS)
-   - Placer les fichiers dans les dossiers appropriés
-   - Activer Authentication (Email/Password) et Firestore
+### 👥 Comptes de Test
 
-4. **Lancer l'application**
-```bash
-# En mode debug
-flutter run
+| Rôle | Email | Mot de passe |
+|------|-------|--------------|
+| **Admin** | admin@sav.com | admin123 |
+| **Technicien** | tech@sav.com | admin123 |
+| **Client** | client@sav.com | admin123 |
 
-# En mode release
-flutter run --release
-```
+### 📖 Documentation Complète
+
+- 📘 [Guide de Démarrage Rapide](QUICK_START_GUIDE.md) - Installation en 5 étapes
+- 🔧 [Configuration Backend](BACKEND_CONFIG.md) - Configuration Node.js + MySQL
+- 🗄️ [Guide XAMPP MySQL](XAMPP_MYSQL_GUIDE.md) - Configuration de la base de données
+- 📋 [Structure du Projet](STRUCTURE.md) - Architecture complète
 
 ## 📦 Dépendances Principales
 
@@ -186,11 +208,11 @@ flutter run --release
 - `get` : Navigation et routing
 
 ### Backend & Data
-- `firebase_core` : Firebase SDK
-- `firebase_auth` : Authentification
-- `cloud_firestore` : Base de données NoSQL
-- `firebase_messaging` : Push notifications
-- `hive` : Base de données locale
+- **Backend** : Node.js + Express
+- **Base de données** : MySQL (XAMPP)
+- **Authentification** : JWT + bcrypt
+- `http` : Client HTTP Flutter
+- `shared_preferences` : Stockage local
 
 ### Fonctionnalités
 - `google_maps_flutter` : Cartes et géolocalisation
@@ -250,52 +272,53 @@ Configuration dans `lib/core/localization/app_translations.dart`
 - Règles de sécurité Firestore
 - Storage des tokens sécurisé
 
-## 📊 Base de Données (Firestore)
+## 📊 Base de Données (MySQL)
 
-### Collections principales
+### Structure de la Base de Données
 
-#### `users`
-```json
-{
-  "id": "string",
-  "fullName": "string",
-  "email": "string",
-  "phone": "string",
-  "role": "client|technician|admin",
-  "photoUrl": "string?",
-  "createdAt": "timestamp"
-}
-```
+La base de données `sav_db` contient 6 tables principales :
 
-#### `appointments`
-```json
-{
-  "id": "string",
-  "clientId": "string",
-  "technicianId": "string",
-  "storeId": "string",
-  "dateTime": "timestamp",
-  "reason": "string",
-  "status": "pending|confirmed|completed|cancelled",
-  "photoUrls": ["string"]
-}
-```
+#### 1. `users` - Utilisateurs
+- `id` (INT PRIMARY KEY)
+- `email`, `password_hash`, `full_name`, `phone`
+- `role` (ENUM: 'client', 'technician', 'admin')
+- `is_active`, `created_at`, `updated_at`
 
-#### `repairs`
-```json
-{
-  "id": "string",
-  "clientId": "string",
-  "technicianId": "string",
-  "productType": "string",
-  "brand": "string",
-  "model": "string",
-  "status": "waiting|assigned|diagnostic|repairing|repaired|ready",
-  "estimatedTime": "string",
-  "estimatedCost": "number",
-  "rating": "number?"
-}
-```
+#### 2. `repairs` - Réparations
+- `id` (INT PRIMARY KEY)
+- `client_id`, `technician_id` (FK vers users)
+- `product_type`, `brand`, `model`, `issue_description`
+- `status` (ENUM: 'waiting', 'assigned', 'diagnostic', 'repairing', 'repaired', 'ready')
+- `estimated_cost`, `actual_cost`, `estimated_time`
+- `rating`, `feedback`
+
+#### 3. `appointments` - Rendez-vous
+- `id` (INT PRIMARY KEY)
+- `client_id`, `technician_id` (FK vers users)
+- `appointment_date`, `store_location`, `reason`
+- `status` (ENUM: 'pending', 'confirmed', 'completed', 'cancelled')
+
+#### 4. `offers` - Offres et Promotions
+- `id` (INT PRIMARY KEY)
+- `title`, `description`, `discount_percentage`
+- `start_date`, `end_date`, `is_active`
+
+#### 5. `notifications` - Notifications
+- `id` (INT PRIMARY KEY)
+- `user_id` (FK vers users)
+- `title`, `message`, `type`, `is_read`
+
+#### 6. `repair_history` - Historique des Réparations
+- `id` (INT PRIMARY KEY)
+- `repair_id` (FK vers repairs)
+- `status`, `notes`, `changed_by`, `changed_at`
+
+### Vues et Procédures Stockées
+
+Le fichier `backend/database.sql` inclut également :
+- **Vues** : Statistiques et rapports précalculés
+- **Triggers** : Mise à jour automatique de l'historique
+- **Procédures stockées** : Opérations complexes optimisées
 
 ## 🧪 Tests
 

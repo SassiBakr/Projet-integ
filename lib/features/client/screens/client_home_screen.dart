@@ -184,19 +184,19 @@ class ClientDashboard extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            _RepairStatusCard(
+            const _RepairStatusCard(
               productType: 'iPhone 12',
               status: 'Réparation en cours',
-              statusColor: const Color(0xFF8B5CF6),
+              statusColor: Color(0xFF8B5CF6),
               date: '2 jours restants',
             ),
 
             const SizedBox(height: 12),
 
-            _RepairStatusCard(
+            const _RepairStatusCard(
               productType: 'HP Pavilion 15',
               status: 'En attente',
-              statusColor: const Color(0xFFEF4444),
+              statusColor: Color(0xFFEF4444),
               date: 'Créé il y a 3h',
             ),
           ],

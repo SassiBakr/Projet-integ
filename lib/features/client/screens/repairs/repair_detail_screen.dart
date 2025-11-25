@@ -85,28 +85,28 @@ class RepairDetailScreen extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 16),
-                    _StatusTimelineItem(
+                    const _StatusTimelineItem(
                       icon: Icons.check_circle,
                       title: 'En attente',
                       subtitle: '20 Nov 2025, 10:00',
                       isCompleted: true,
                       color: AppTheme.statusWaiting,
                     ),
-                    _StatusTimelineItem(
+                    const _StatusTimelineItem(
                       icon: Icons.check_circle,
                       title: 'Assigné',
                       subtitle: '20 Nov 2025, 14:30',
                       isCompleted: true,
                       color: AppTheme.statusAssigned,
                     ),
-                    _StatusTimelineItem(
+                    const _StatusTimelineItem(
                       icon: Icons.check_circle,
                       title: 'Diagnostic en cours',
                       subtitle: '21 Nov 2025, 09:15',
                       isCompleted: true,
                       color: AppTheme.statusDiagnostic,
                     ),
-                    _StatusTimelineItem(
+                    const _StatusTimelineItem(
                       icon: Icons.circle,
                       title: 'Réparation en cours',
                       subtitle: 'En cours',
@@ -114,7 +114,7 @@ class RepairDetailScreen extends StatelessWidget {
                       isCurrent: true,
                       color: AppTheme.statusRepairing,
                     ),
-                    _StatusTimelineItem(
+                    const _StatusTimelineItem(
                       icon: Icons.circle_outlined,
                       title: 'Réparé',
                       subtitle: 'À venir',
@@ -157,10 +157,10 @@ class RepairDetailScreen extends StatelessWidget {
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
                               const SizedBox(height: 4),
-                              Row(
+                              const Row(
                                 children: [
-                                  const Icon(Icons.star, size: 16, color: Colors.amber),
-                                  const SizedBox(width: 4),
+                                  Icon(Icons.star, size: 16, color: Colors.amber),
+                                  SizedBox(width: 4),
                                   Text('4.8 (120 avis)'),
                                 ],
                               ),

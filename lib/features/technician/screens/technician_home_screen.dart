@@ -100,7 +100,7 @@ class TechnicianHomeScreen extends StatelessWidget {
             Switch(
               value: true,
               onChanged: (value) {},
-              activeColor: Colors.green,
+              activeThumbColor: Colors.green,
             ),
           ],
         ),
